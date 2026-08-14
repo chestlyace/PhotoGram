@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:photogram/components/neumorphic.dart';
 import 'package:photogram/components/photoTile.dart';
 import 'package:photogram/screens/personAlbumScreen.dart';
 import 'package:photogram/screens/profileScreen.dart';
@@ -11,7 +12,7 @@ import 'helpers.dart';
 
 void main() {
   Future<void> pumpProfile(WidgetTester tester) async {
-    setPhoneSurface(tester);
+    setPhoneSurface(tester, const Size(402, 1600));
     await tester.pumpWidget(
       MaterialApp(theme: buildAppTheme(), home: const ProfileScreen()),
     );
@@ -32,7 +33,7 @@ void main() {
 
     expect(find.text('CONNECTED ACCOUNTS'), findsOneWidget);
     expect(find.text('Google Photos'), findsOneWidget);
-    expect(find.text('iCloud'), findsOneWidget);
+    expect(find.text('Google Calendar'), findsOneWidget);
 
     expect(find.text('PEOPLE IN YOUR LIBRARY'), findsOneWidget);
     expect(find.text('David'), findsOneWidget);
@@ -52,6 +53,30 @@ void main() {
     await pumpProfile(tester);
 
     expect(find.byType(PlaceholderArtwork), findsNWidgets(5));
+  });
+
+  testWidgets('storage fill starts flush with the left edge of the track',
+      (tester) async {
+    await pumpProfile(tester);
+
+    final track = find.byWidgetPredicate(
+      (w) =>
+          w is Neumorphic &&
+          w.variant == NeumorphicVariant.concave &&
+          w.radius == 6,
+    );
+    final fill = find.byWidgetPredicate(
+      (w) =>
+          w is DecoratedBox &&
+          w.decoration is BoxDecoration &&
+          (w.decoration as BoxDecoration).color == AppColors.outline,
+    );
+
+    expect(track, findsOneWidget);
+    expect(fill, findsOneWidget);
+
+    expect(tester.getTopLeft(fill).dx, tester.getTopLeft(track).dx);
+    expect(tester.getSize(fill).width, lessThan(tester.getSize(track).width));
   });
 
   testWidgets('bottom nav shows the active profile tab', (tester) async {
@@ -78,6 +103,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Notifications is coming soon.'), findsOneWidget);
 
+    await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Help & support'));
     await tester.pumpAndSettle();

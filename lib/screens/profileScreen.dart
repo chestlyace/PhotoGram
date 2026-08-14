@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               const _AccountRow(icon: Icons.perm_media, label: 'Google Photos'),
               const SizedBox(height: 16),
-              const _AccountRow(icon: Icons.cloud_sync, label: 'iCloud'),
+              const _AccountRow(icon: Icons.calendar_month, label: 'Google Calendar'),
               const SizedBox(height: AppSpacing.sectionGap),
               const _SectionLabel('People in your library'),
               const SizedBox(height: 16),
@@ -95,11 +95,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _placeholder('${_settings[i].$2} is coming soon.'),
                       ),
                     ],
+                    const SizedBox(height: 24),
+                    _SettingsRow(
+                      icon: Icons.logout_rounded,
+                      label: 'Sign out',
+                      color: AppColors.error,
+                      onTap: () => _placeholder('Signing out is coming soon.'),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.sectionGap),
-              _SignOut(onTap: () => _placeholder('Signing out is coming soon.')),
             ],
           ),
           Positioned(
@@ -237,21 +242,33 @@ class _StorageBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Neumorphic(
-      variant: NeumorphicVariant.concave,
-      color: AppColors.surfaceContainerHighest,
-      radius: 6,
-      child: SizedBox(
-        height: 12,
-        child: FractionallySizedBox(
-          widthFactor: fraction,
-          child: const DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.outline,
-              borderRadius: BorderRadius.all(Radius.circular(6)),
+    return SizedBox(
+      height: 12,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Neumorphic(
+              variant: NeumorphicVariant.concave,
+              color: AppColors.surfaceContainerHighest,
+              radius: 6,
             ),
           ),
-        ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              height: 12,
+              child: FractionallySizedBox(
+                widthFactor: fraction,
+                child: const DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.outline,
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -403,11 +420,17 @@ class _PersonTile extends StatelessWidget {
 }
 
 class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({required this.icon, required this.label, required this.onTap});
+  const _SettingsRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color = AppColors.onSurface,
+  });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -415,7 +438,7 @@ class _SettingsRow extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          Icon(icon, size: 22, color: AppColors.onSurfaceVariant),
+          Icon(icon, size: 22, color: color),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -423,39 +446,11 @@ class _SettingsRow extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.w600),
+                  ?.copyWith(color: color, fontWeight: FontWeight.w600),
             ),
           ),
-          const Icon(Icons.chevron_right, size: 20, color: AppColors.outline),
+          Icon(Icons.chevron_right, size: 20, color: color.withValues(alpha: 0.6)),
         ],
-      ),
-    );
-  }
-}
-
-class _SignOut extends StatelessWidget {
-  const _SignOut({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 32),
-      child: Center(
-        child: GestureDetector(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              'Sign out',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(color: AppColors.error, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
       ),
     );
   }
