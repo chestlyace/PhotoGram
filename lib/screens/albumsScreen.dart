@@ -1,149 +1,322 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
-import '../components/placeholderArtwork.dart';
-import '../components/tabAppBar.dart';
-import '../theme.dart';
 
-class AlbumsScreen extends StatelessWidget {
+import '../components/bottomNav.dart';
+import '../components/neumorphic.dart';
+import '../components/photoTile.dart';
+import '../components/topBar.dart';
+import '../theme.dart';
+import 'peopleScreen.dart';
+import 'profileScreen.dart';
+import 'searchScreen.dart';
+
+class _SmartAlbum {
+  const _SmartAlbum(this.title, this.count, this.seed);
+
+  final String title;
+  final int count;
+  final String seed;
+}
+
+class _YourAlbum {
+  const _YourAlbum(this.title, this.subtitle, this.seed);
+
+  final String title;
+  final String subtitle;
+  final String seed;
+}
+
+class AlbumsScreen extends StatefulWidget {
   const AlbumsScreen({super.key});
+
+  @override
+  State<AlbumsScreen> createState() => _AlbumsScreenState();
+}
+
+class _AlbumsScreenState extends State<AlbumsScreen> {
+  static const _smartAlbums = [
+    _SmartAlbum('People', 124, 'people'),
+    _SmartAlbum('Screenshots', 89, 'screenshots'),
+    _SmartAlbum('Documents', 42, 'documents'),
+    _SmartAlbum('Trips', 15, 'trips'),
+  ];
+
+  static const _yourAlbums = [
+    _YourAlbum('Summer 2025', 'July 1 - Aug 15 • 312 photos', 'summer'),
+    _YourAlbum('Favorites', '48 photos', 'favorites'),
+  ];
+
+  void _openSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const SearchScreen()),
+    );
+  }
+
+  void _openProfile() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ProfileScreen()),
+    );
+  }
+
+  void _onSmartAlbumTap(String title) {
+    if (title == 'People') {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const PeopleScreen()),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$title album is coming soon.')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TabAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Smart Albums',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.onSurface),
-            ),
-            const SizedBox(height: 16),
-            _smartAlbumsGrid(),
-            const SizedBox(height: 24),
-            Divider(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const Text(
-                  'My Albums',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.onSurface),
+      body: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.only(top: 92, bottom: 120),
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.containerMargin),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _SectionTitle('Smart Albums'),
+                    const SizedBox(height: 24),
+                    _SmartAlbumGrid(
+                      albums: _smartAlbums,
+                      onAlbumTap: _onSmartAlbumTap,
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                    const _SectionTitle('Your Albums'),
+                    const SizedBox(height: 24),
+                    _YourAlbumList(albums: _yourAlbums),
+                  ],
                 ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add),
-                  color: AppColors.primary,
-                  tooltip: 'New album',
-                ),
-              ],
+              ),
+            ],
+          ),
+          Positioned(
+            top: 12,
+            left: 24,
+            right: 24,
+            child: PhotogramTopBar(onSearch: _openSearch),
+          ),
+          Positioned(
+            bottom: 12,
+            left: 24,
+            right: 24,
+            child: PhotogramNav(
+              selected: PhotogramTab.albums,
+              onSelect: (tab) {
+                switch (tab) {
+                  case PhotogramTab.library:
+                    Navigator.of(context).pop();
+                  case PhotogramTab.search:
+                    _openSearch();
+                  case PhotogramTab.albums:
+                    break;
+                  case PhotogramTab.profile:
+                    _openProfile();
+                }
+              },
             ),
-            const SizedBox(height: 8),
-            _myAlbumsGrid(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _smartAlbumsGrid() {
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(title, style: Theme.of(context).textTheme.headlineSmall);
+  }
+}
+
+class _SmartAlbumGrid extends StatelessWidget {
+  const _SmartAlbumGrid({required this.albums, required this.onAlbumTap});
+
+  final List<_SmartAlbum> albums;
+  final ValueChanged<String> onAlbumTap;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(child: _albumCard('People', '248 photos', icon: Icons.person, isPeopleGrid: true)),
-            const SizedBox(width: 16),
-            Expanded(child: _albumCard('Screenshots', '112 items', icon: Icons.screenshot)),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(child: _albumCard('Documents', '45 items', icon: Icons.description)),
-            const SizedBox(width: 16),
-            Expanded(child: _albumCard('Notes', '18 items', icon: Icons.notes)),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(child: _albumCard('On This Day', '3 years ago', icon: Icons.calendar_month, imageSeed: 'on-this-day')),
-            const SizedBox(width: 16),
-            Expanded(child: _albumCard('Trips', '864 photos', icon: Icons.flight, imageSeed: 'trips')),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _myAlbumsGrid() {
-    return Row(
-      children: [
-        Expanded(child: _albumCard('Summer 2025', '124 items', icon: Icons.beach_access, imageSeed: 'summer-2025')),
-        const SizedBox(width: 16),
-        Expanded(child: _albumCard('Home Office', '32 items', icon: Icons.home_work, imageSeed: 'home-office')),
-      ],
-    );
-  }
-
-  Widget _albumCard(
-    String title,
-    String count, {
-    required IconData icon,
-    bool isPeopleGrid = false,
-    String? imageSeed,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: imageSeed != null
-                ? Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      PlaceholderArtwork(seed: imageSeed, icon: icon, iconSize: 40),
-                      ColoredBox(color: Colors.black.withValues(alpha: 0.25)),
-                      Center(child: Icon(icon, size: 32, color: Colors.white)),
-                    ],
-                  )
-                : isPeopleGrid
-                    ? _peopleArtwork()
-                    : Container(
-                        color: AppColors.surfaceContainer,
-                        child: Icon(icon, size: 40, color: AppColors.secondary),
-                      ),
+        for (var i = 0; i < albums.length; i += 2) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _SmartAlbumTile(
+                  title: albums[i].title,
+                  count: albums[i].count,
+                  seed: albums[i].seed,
+                  onTap: () => onAlbumTap(albums[i].title),
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _SmartAlbumTile(
+                  title: albums[i + 1].title,
+                  count: albums[i + 1].count,
+                  seed: albums[i + 1].seed,
+                  onTap: () => onAlbumTap(albums[i + 1].title),
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primary)),
-        const SizedBox(height: 2),
-        Text(count, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+          if (i + 2 < albums.length) const SizedBox(height: 24),
+        ],
       ],
     );
   }
+}
 
-  Widget _peopleArtwork() {
-    return Container(
-      color: AppColors.surfaceContainer,
-      padding: const EdgeInsets.all(4),
-      child: GridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        physics: const NeverScrollableScrollPhysics(),
+class _SmartAlbumTile extends StatelessWidget {
+  const _SmartAlbumTile({
+    required this.title,
+    required this.count,
+    required this.seed,
+    required this.onTap,
+  });
+
+  final String title;
+  final int count;
+  final String seed;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (var i = 0; i < 4; i++)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: PlaceholderArtwork(seed: 'people-$i', icon: Icons.person, iconSize: 20),
+          Neumorphic(
+            radius: 16,
+            padding: const EdgeInsets.all(4),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: PlaceholderArtwork(seed: seed),
+              ),
             ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '$count items',
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: AppColors.onSurfaceVariant),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _YourAlbumList extends StatelessWidget {
+  const _YourAlbumList({required this.albums});
+
+  final List<_YourAlbum> albums;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final album in albums) ...[
+          _YourAlbumCard(
+            title: album.title,
+            subtitle: album.subtitle,
+            seed: album.seed,
+          ),
+          if (album != albums.last) const SizedBox(height: 24),
+        ],
+      ],
+    );
+  }
+}
+
+class _YourAlbumCard extends StatelessWidget {
+  const _YourAlbumCard({
+    required this.title,
+    required this.subtitle,
+    required this.seed,
+  });
+
+  final String title;
+  final String subtitle;
+  final String seed;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$title album is coming soon.')),
+      ),
+      child: Neumorphic(
+        radius: 32,
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: PlaceholderArtwork(seed: seed),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: AppColors.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Icon(
+                Icons.chevron_right,
+                size: 24,
+                color: AppColors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

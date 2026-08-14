@@ -1,44 +1,35 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
-import '../theme.dart';
 
-class StickySectionHeader extends StatelessWidget {
-  const StickySectionHeader({super.key, required this.title});
+import '../theme.dart';
+import 'neumorphic.dart';
+
+class SectionHeader extends StatelessWidget {
+  const SectionHeader({super.key, required this.title, required this.count});
 
   final String title;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    return SliverPersistentHeader(pinned: true, delegate: _SectionHeaderDelegate(title));
-  }
-}
-
-class _SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
-  const _SectionHeaderDelegate(this.title);
-
-  final String title;
-
-  @override
-  double get minExtent => 40;
-  @override
-  double get maxExtent => 40;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: AppColors.background.withValues(alpha: 0.92),
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.onSurface),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        children: [
+          Text(title, style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(width: 8),
+          Neumorphic(
+            radius: 12,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            child: Text(
+              '$count',
+              style: Theme.of(context)
+                  .textTheme
+                  .labelMedium
+                  ?.copyWith(color: AppColors.onPrimaryContainer),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  @override
-  bool shouldRebuild(covariant _SectionHeaderDelegate oldDelegate) {
-    return oldDelegate.title != title;
   }
 }

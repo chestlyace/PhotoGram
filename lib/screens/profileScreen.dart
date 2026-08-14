@@ -1,322 +1,461 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
-import '../components/placeholderAvatar.dart';
-import '../theme.dart';
 
-class ProfileScreen extends StatelessWidget {
+import '../components/bottomNav.dart';
+import '../components/neumorphic.dart';
+import '../components/photoTile.dart';
+import '../components/topBar.dart';
+import '../theme.dart';
+import 'albumsScreen.dart';
+import 'personAlbumScreen.dart';
+import 'searchScreen.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  static const _name = 'Sarah Miller';
+  static const _handle = '@sarahm';
+  static const _people = ['David', 'Emma', 'James', 'Sophie'];
+
+  static const _settings = [
+    (Icons.notifications_outlined, 'Notifications'),
+    (Icons.lock_outline, 'Privacy & Sharing'),
+    (Icons.backup_outlined, 'Backup preferences'),
+    (Icons.data_usage, 'Storage & data'),
+    (Icons.help_outline, 'Help & support'),
+  ];
+
+  void _placeholder(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _openSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const SearchScreen()),
+    );
+  }
+
+  void _openAlbums() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const AlbumsScreen()),
+    );
+  }
+
+  void _openPerson(String name) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PersonAlbumScreen(personName: name),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(64),
-        child: Container(
-          height: 64,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          color: AppColors.background.withValues(alpha: 0.85),
-          child: Row(
+      body: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.fromLTRB(24, 92, 24, 150),
             children: [
-              const Expanded(
-                child: Text(
-                  'Profile',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: AppColors.primary),
+              const _ProfileHeader(name: _name, handle: _handle),
+              const SizedBox(height: AppSpacing.sectionGap),
+              _StorageCard(
+                onManage: () => _placeholder('Storage management is coming soon.'),
+              ),
+              const SizedBox(height: AppSpacing.sectionGap),
+              const _SectionLabel('Connected Accounts'),
+              const SizedBox(height: 16),
+              const _AccountRow(icon: Icons.perm_media, label: 'Google Photos'),
+              const SizedBox(height: 16),
+              const _AccountRow(icon: Icons.cloud_sync, label: 'iCloud'),
+              const SizedBox(height: AppSpacing.sectionGap),
+              const _SectionLabel('People in your library'),
+              const SizedBox(height: 16),
+              _PeopleRow(names: _people, onTap: _openPerson),
+              const SizedBox(height: AppSpacing.sectionGap),
+              Container(
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Color(0x4DC6C6CB))),
                 ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).pushNamed('/settings'),
-                icon: const Icon(Icons.settings),
-                color: AppColors.secondary,
-                tooltip: 'Settings',
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        children: [
-          _profileHeader(),
-          const SizedBox(height: 24),
-          _storageCard(context),
-          const SizedBox(height: 24),
-          const Text(
-            'Connected Accounts',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.primary),
-          ),
-          const SizedBox(height: 12),
-          _accountsCard(),
-          const SizedBox(height: 24),
-          _peopleSection(),
-          const SizedBox(height: 24),
-          _settingsList(),
-          const SizedBox(height: 16),
-          Center(
-            child: TextButton(
-              onPressed: () {},
-              child: const Text('Sign Out', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _profileHeader() {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            const PlaceholderAvatar(seed: 'sarah', size: 96),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                child: const Icon(Icons.edit, size: 16, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'Sarah Jenkins',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.primary),
-        ),
-        const SizedBox(height: 2),
-        const Text('@sjenkins', style: TextStyle(fontSize: 16, color: AppColors.onSurfaceVariant)),
-      ],
-    );
-  }
-
-  Widget _storageCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.cloud_done, size: 20, color: AppColors.success),
-              SizedBox(width: 8),
-              Text(
-                'Photogram Storage',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: Container(
-              height: 6,
-              color: AppColors.surfaceContainer,
-              alignment: Alignment.centerLeft,
-              child: FractionallySizedBox(
-                widthFactor: 2 / 3,
-                child: Container(color: AppColors.primary),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            '12.4 GB backed up · 3,204 items',
-            style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () => Navigator.of(context).pushNamed('/settings'),
-              style: TextButton.styleFrom(
-                backgroundColor: AppColors.surfaceContainerLow,
-                foregroundColor: AppColors.primary,
-              ),
-              child: const Text('Manage storage'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _accountsCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant),
-      ),
-      child: Column(
-        children: [
-          _accountRow(icon: Icons.send, iconBg: const Color(0xFFE3F2FD), iconColor: const Color(0xFF1E88E5), name: 'Telegram', connected: true),
-          Divider(height: 1, color: AppColors.surfaceContainer),
-          _accountRow(icon: Icons.calendar_today, iconBg: const Color(0xFFE8F5E9), iconColor: const Color(0xFF43A047), name: 'Google Calendar', connected: true),
-          Divider(height: 1, color: AppColors.surfaceContainer),
-          _accountRow(icon: Icons.photo, iconBg: AppColors.surfaceContainer, iconColor: AppColors.onSurfaceVariant, name: 'Google Photos', connected: false),
-        ],
-      ),
-    );
-  }
-
-  Widget _accountRow({
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-    required String name,
-    required bool connected,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-            child: Icon(icon, size: 20, color: iconColor),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontSize: 16, color: AppColors.primary)),
-                const SizedBox(height: 2),
-                if (connected)
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        margin: const EdgeInsets.only(right: 6),
-                        decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
-                      ),
-                      const Text('Connected', style: TextStyle(fontSize: 12, color: AppColors.success)),
-                    ],
-                  )
-                else
-                  const Text('Not connected', style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant)),
-              ],
-            ),
-          ),
-          if (!connected)
-            TextButton(
-              onPressed: () {},
-              child: const Text('Connect'),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _peopleSection() {
-    const names = ['Emma', 'David', 'Sarah', 'Mom'];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Text(
-              'People',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: AppColors.primary),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Manage', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (var i = 0; i < names.length; i++) ...[
-                Column(
+                padding: const EdgeInsets.only(top: 16, bottom: 32),
+                child: Column(
                   children: [
-                    PlaceholderAvatar(seed: names[i].toLowerCase(), size: 64),
-                    const SizedBox(height: 6),
-                    Text(names[i], style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant)),
+                    for (var i = 0; i < _settings.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 24),
+                      _SettingsRow(
+                        icon: _settings[i].$1,
+                        label: _settings[i].$2,
+                        onTap: () =>
+                            _placeholder('${_settings[i].$2} is coming soon.'),
+                      ),
+                    ],
                   ],
                 ),
-                if (i < names.length - 1) const SizedBox(width: 16),
-              ],
+              ),
+              const SizedBox(height: AppSpacing.sectionGap),
+              _SignOut(onTap: () => _placeholder('Signing out is coming soon.')),
             ],
           ),
+          Positioned(
+            top: 12,
+            left: 24,
+            right: 24,
+            child: PhotogramTopBar(
+              onCamera: () => _placeholder('Camera is coming soon.'),
+              onSearch: _openSearch,
+            ),
+          ),
+          Positioned(
+            bottom: 12,
+            left: 24,
+            right: 24,
+            child: PhotogramNav(
+              selected: PhotogramTab.profile,
+              onSelect: (tab) {
+                switch (tab) {
+                  case PhotogramTab.library:
+                    Navigator.of(context).pop();
+                  case PhotogramTab.search:
+                    _openSearch();
+                  case PhotogramTab.albums:
+                    _openAlbums();
+                  case PhotogramTab.profile:
+                    break;
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({required this.name, required this.handle});
+
+  final String name;
+  final String handle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 128,
+          height: 128,
+          padding: const EdgeInsets.all(4),
+          decoration: const BoxDecoration(
+            color: AppColors.canvas,
+            shape: BoxShape.circle,
+            boxShadow: NeumorphicShadows.convex,
+          ),
+          child: ClipOval(child: PlaceholderArtwork(seed: 'sarah')),
+        ),
+        const SizedBox(height: 24),
+        Text(name, style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 4),
+        Text(
+          handle,
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(color: AppColors.onSurfaceVariant),
         ),
       ],
     );
   }
+}
 
-  Widget _settingsList() {
-    final rows = <(IconData, String, String?)>[
-      (Icons.notifications, 'Notifications', null),
-      (Icons.shield, 'Privacy & Sharing', null),
-      (Icons.backup, 'Backup', 'Wi-Fi only'),
-      (Icons.storage, 'Storage & data', null),
-      (Icons.help, 'Help & support', null),
-    ];
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant),
-      ),
+class _StorageCard extends StatelessWidget {
+  const _StorageCard({required this.onManage});
+
+  final VoidCallback onManage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Neumorphic(
+      radius: AppRadii.card,
+      padding: const EdgeInsets.all(24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (var i = 0; i < rows.length; i++) ...[
-            _settingsRow(icon: rows[i].$1, label: rows[i].$2, detail: rows[i].$3),
-            if (i < rows.length - 1) Divider(height: 1, color: AppColors.surfaceContainer),
+          Row(
+            children: [
+              Text('Storage', style: Theme.of(context).textTheme.headlineMedium),
+              const Spacer(),
+              const Icon(Icons.cloud, size: 22, color: AppColors.onSurfaceVariant),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const _StorageBar(fraction: 14.2 / 15),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '14.2 GB',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'of 15 GB used',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: AppColors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              _ManageButton(onTap: onManage),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StorageBar extends StatelessWidget {
+  const _StorageBar({required this.fraction});
+
+  final double fraction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Neumorphic(
+      variant: NeumorphicVariant.concave,
+      color: AppColors.surfaceContainerHighest,
+      radius: 6,
+      child: SizedBox(
+        height: 12,
+        child: FractionallySizedBox(
+          widthFactor: fraction,
+          child: const DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.outline,
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ManageButton extends StatelessWidget {
+  const _ManageButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Neumorphic(
+        radius: 32,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Text(
+          'Manage',
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Text(
+        label.toUpperCase(),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: AppColors.onSurfaceVariant,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.05,
+            ),
+      ),
+    );
+  }
+}
+
+class _AccountRow extends StatelessWidget {
+  const _AccountRow({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Neumorphic(
+      radius: 20,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Neumorphic(
+            variant: NeumorphicVariant.concave,
+            radius: 20,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(icon, size: 20, color: AppColors.onSurfaceVariant),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF34A853),
+              boxShadow: NeumorphicShadows.convex,
+            ),
+            child: SizedBox(width: 12, height: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PeopleRow extends StatelessWidget {
+  const _PeopleRow({required this.names, required this.onTap});
+
+  final List<String> names;
+  final ValueChanged<String> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      child: Row(
+        children: [
+          for (var i = 0; i < names.length; i++) ...[
+            if (i > 0) const SizedBox(width: 24),
+            _PersonTile(name: names[i], onTap: () => onTap(names[i])),
           ],
         ],
       ),
     );
   }
+}
 
-  Widget _settingsRow({required IconData icon, required String label, String? detail}) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+class _PersonTile extends StatelessWidget {
+  const _PersonTile({required this.name, required this.onTap});
+
+  final String name;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            padding: const EdgeInsets.all(3),
+            decoration: const BoxDecoration(
+              color: AppColors.canvas,
+              shape: BoxShape.circle,
+              boxShadow: NeumorphicShadows.convex,
+            ),
+            child: ClipOval(child: PlaceholderArtwork(seed: name)),
+          ),
+          const SizedBox(height: 8),
+          Text(name, style: Theme.of(context).textTheme.bodySmall),
+        ],
+      ),
+    );
+  }
+}
+
+class _SettingsRow extends StatelessWidget {
+  const _SettingsRow({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppColors.secondary),
+          Icon(icon, size: 22, color: AppColors.onSurfaceVariant),
           const SizedBox(width: 16),
           Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 16, color: AppColors.primary)),
-          ),
-          if (detail != null)
-            Text(detail, style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant)),
-          if (detail == 'Wi-Fi only') ...[
-            const SizedBox(width: 8),
-            Container(
-              width: 40,
-              height: 24,
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: const Align(
-                alignment: Alignment.centerRight,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: SizedBox(width: 20, height: 20),
-                ),
-              ),
+            child: Text(
+              label,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
-          ] else ...[
-            const SizedBox(width: 4),
-            const Icon(Icons.chevron_right, size: 20, color: AppColors.onSurfaceVariant),
-          ],
+          ),
+          const Icon(Icons.chevron_right, size: 20, color: AppColors.outline),
         ],
+      ),
+    );
+  }
+}
+
+class _SignOut extends StatelessWidget {
+  const _SignOut({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 32),
+      child: Center(
+        child: GestureDetector(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              'Sign out',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: AppColors.error, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
       ),
     );
   }
