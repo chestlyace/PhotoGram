@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:photogram/components/photoTile.dart';
 import 'package:photogram/screens/albumsScreen.dart';
+import 'package:photogram/screens/eventMemoryScreen.dart';
 import 'package:photogram/screens/peopleScreen.dart';
 import 'package:photogram/screens/profileScreen.dart';
 import 'package:photogram/screens/searchScreen.dart';
@@ -81,6 +82,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Favorites album is coming soon.'), findsOneWidget);
+  });
+
+  testWidgets('Summer 2025 album opens the event memory screen',
+      (tester) async {
+    await pumpAlbums(tester);
+
+    await tester.ensureVisible(find.text('Summer 2025'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Summer 2025'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(EventMemoryScreen), findsOneWidget);
+    expect(find.text('Summer Vacation 2025'), findsOneWidget);
   });
 
   testWidgets('People album opens People, a person opens their album, back returns',

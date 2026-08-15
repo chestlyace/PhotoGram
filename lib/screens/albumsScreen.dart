@@ -8,6 +8,7 @@ import '../theme.dart';
 import 'peopleScreen.dart';
 import 'profileScreen.dart';
 import 'searchScreen.dart';
+import 'eventMemoryScreen.dart';
 
 class _SmartAlbum {
   const _SmartAlbum(this.title, this.count, this.seed);
@@ -69,6 +70,18 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
     );
   }
 
+  void _onYourAlbumTap(String title) {
+    if (title == 'Summer 2025') {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const EventMemoryScreen()),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$title album is coming soon.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +105,10 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
                     const SizedBox(height: AppSpacing.sectionGap),
                     const _SectionTitle('Your Albums'),
                     const SizedBox(height: 24),
-                    _YourAlbumList(albums: _yourAlbums),
+                    _YourAlbumList(
+                      albums: _yourAlbums,
+                      onAlbumTap: _onYourAlbumTap,
+                    ),
                   ],
                 ),
               ),
@@ -234,9 +250,10 @@ class _SmartAlbumTile extends StatelessWidget {
 }
 
 class _YourAlbumList extends StatelessWidget {
-  const _YourAlbumList({required this.albums});
+  const _YourAlbumList({required this.albums, required this.onAlbumTap});
 
   final List<_YourAlbum> albums;
+  final ValueChanged<String> onAlbumTap;
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +264,7 @@ class _YourAlbumList extends StatelessWidget {
             title: album.title,
             subtitle: album.subtitle,
             seed: album.seed,
+            onTap: () => onAlbumTap(album.title),
           ),
           if (album != albums.last) const SizedBox(height: 24),
         ],
@@ -260,18 +278,18 @@ class _YourAlbumCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.seed,
+    required this.onTap,
   });
 
   final String title;
   final String subtitle;
   final String seed;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$title album is coming soon.')),
-      ),
+      onTap: onTap,
       child: Neumorphic(
         radius: 32,
         padding: const EdgeInsets.all(8),

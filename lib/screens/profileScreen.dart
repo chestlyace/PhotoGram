@@ -8,6 +8,7 @@ import '../theme.dart';
 import 'albumsScreen.dart';
 import 'personAlbumScreen.dart';
 import 'searchScreen.dart';
+import 'storageScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -41,6 +42,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _openStorage() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const StorageScreen()),
+    );
+  }
+
   void _openAlbums() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => const AlbumsScreen()),
@@ -66,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const _ProfileHeader(name: _name, handle: _handle),
               const SizedBox(height: AppSpacing.sectionGap),
               _StorageCard(
-                onManage: () => _placeholder('Storage management is coming soon.'),
+                onManage: _openStorage,
               ),
               const SizedBox(height: AppSpacing.sectionGap),
               const _SectionLabel('Connected Accounts'),
@@ -91,8 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsRow(
                         icon: _settings[i].$1,
                         label: _settings[i].$2,
-                        onTap: () =>
-                            _placeholder('${_settings[i].$2} is coming soon.'),
+                        onTap: _settings[i].$2 == 'Storage & data'
+                            ? _openStorage
+                            : () =>
+                                _placeholder('${_settings[i].$2} is coming soon.'),
                       ),
                     ],
                     const SizedBox(height: 24),

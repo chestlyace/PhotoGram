@@ -6,6 +6,7 @@ import 'package:photogram/components/photoTile.dart';
 import 'package:photogram/screens/personAlbumScreen.dart';
 import 'package:photogram/screens/profileScreen.dart';
 import 'package:photogram/screens/searchScreen.dart';
+import 'package:photogram/screens/storageScreen.dart';
 import 'package:photogram/theme.dart';
 
 import 'helpers.dart';
@@ -87,13 +88,24 @@ void main() {
     expect(find.byTooltip('Albums'), findsOneWidget);
   });
 
-  testWidgets('Manage button shows a placeholder snackbar', (tester) async {
+  testWidgets('Manage button opens the storage screen', (tester) async {
     await pumpProfile(tester);
 
     await tester.tap(find.text('Manage'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Storage management is coming soon.'), findsOneWidget);
+    expect(find.byType(StorageScreen), findsOneWidget);
+    expect(find.text('Storage'), findsOneWidget);
+    expect(find.text('2.4 GB of 10 GB used'), findsOneWidget);
+  });
+
+  testWidgets('Storage & data row opens the storage screen', (tester) async {
+    await pumpProfile(tester);
+
+    await tester.tap(find.text('Storage & data'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(StorageScreen), findsOneWidget);
   });
 
   testWidgets('settings rows show placeholder snackbars', (tester) async {

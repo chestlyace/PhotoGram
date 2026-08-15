@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'screens/libraryScreen.dart';
+import 'screens/onboardingScreen.dart';
 import 'theme.dart';
 
 void main() {
@@ -19,7 +19,7 @@ class PhotogramApp extends StatelessWidget {
       title: 'Photogram',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      home: const LibraryScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }
