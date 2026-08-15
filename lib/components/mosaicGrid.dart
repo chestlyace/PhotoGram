@@ -136,6 +136,7 @@ class MosaicGrid extends StatelessWidget {
     this.columnCount = 3,
     this.gap = 0,
     this.radius = AppRadii.grid,
+    this.imageProviders,
     this.onPhotoTap,
   }) : assert(seeds.length == spans.length);
 
@@ -144,10 +145,16 @@ class MosaicGrid extends StatelessWidget {
   final int columnCount;
   final double gap;
   final double radius;
+  final List<ImageProvider>? imageProviders;
   final ValueChanged<int>? onPhotoTap;
 
   @override
   Widget build(BuildContext context) {
+    final providers = imageProviders;
+    assert(
+      providers == null || providers.length == spans.length,
+      'imageProviders must match spans when provided',
+    );
     final placements = placeSpans(spans, columnCount);
     var rowCount = 0;
     for (final placement in placements) {
@@ -186,7 +193,11 @@ class MosaicGrid extends StatelessWidget {
                         (placements[i].rowSpan - 1) * gap,
                     child: GestureDetector(
                       onTap: onPhotoTap == null ? null : () => onPhotoTap!(i),
-                      child: PhotoTile(seed: seeds[i], variation: i),
+                      child: PhotoTile(
+                        seed: seeds[i],
+                        variation: i,
+                        imageProvider: imageProviders?[i],
+                      ),
                     ),
                   ),
               ],

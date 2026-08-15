@@ -5,13 +5,21 @@ import 'package:photogram/screens/libraryScreen.dart';
 import 'package:photogram/screens/onboardingScreen.dart';
 import 'package:photogram/theme.dart';
 
+import 'fakes.dart';
 import 'helpers.dart';
 
 void main() {
+  FakePhotoLibraryService makeLibraryService() {
+    return FakePhotoLibraryService(photos: todayPhotos());
+  }
+
   Future<void> pumpOnboarding(WidgetTester tester) async {
     setPhoneSurface(tester);
     await tester.pumpWidget(
-      MaterialApp(theme: buildAppTheme(), home: const OnboardingScreen()),
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: OnboardingScreen(libraryService: makeLibraryService()),
+      ),
     );
     await tester.pumpAndSettle();
   }

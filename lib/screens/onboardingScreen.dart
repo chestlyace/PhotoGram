@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/neumorphic.dart';
 import '../components/photoTile.dart';
+import '../services/photoLibraryService.dart';
 import '../theme.dart';
 import 'libraryScreen.dart';
 
@@ -13,7 +14,9 @@ const _kBirthdayDinner = 'assets/onboarding/photo_2026-08-15_02-29-02.jpg';
 const _kSummerTrip = 'assets/onboarding/photo_2026-08-15_02-29-09.jpg';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.libraryService});
+
+  final PhotoLibraryService? libraryService;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -67,7 +70,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _enterApp() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const LibraryScreen()),
+      MaterialPageRoute<void>(
+        builder: (_) => LibraryScreen(service: widget.libraryService),
+      ),
     );
   }
 

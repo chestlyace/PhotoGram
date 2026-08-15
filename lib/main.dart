@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'screens/onboardingScreen.dart';
+import 'services/photoLibraryService.dart';
 import 'theme.dart';
 
 void main() {
@@ -11,7 +12,9 @@ void main() {
 }
 
 class PhotogramApp extends StatefulWidget {
-  const PhotogramApp({super.key});
+  const PhotogramApp({super.key, this.libraryService});
+
+  final PhotoLibraryService? libraryService;
 
   @override
   State<PhotogramApp> createState() => _PhotogramAppState();
@@ -58,7 +61,7 @@ class _PhotogramAppState extends State<PhotogramApp>
       themeMode: _brightness == Brightness.dark
           ? ThemeMode.dark
           : ThemeMode.light,
-      home: const OnboardingScreen(),
+      home: OnboardingScreen(libraryService: widget.libraryService),
     );
   }
 }

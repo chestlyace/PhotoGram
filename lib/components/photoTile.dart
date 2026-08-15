@@ -29,16 +29,29 @@ class PlaceholderArtwork extends StatelessWidget {
 }
 
 class PhotoTile extends StatelessWidget {
-  const PhotoTile({super.key, required this.seed, this.variation = 0});
+  const PhotoTile({
+    super.key,
+    required this.seed,
+    this.variation = 0,
+    this.imageProvider,
+  });
 
   final String seed;
   final int variation;
+  final ImageProvider? imageProvider;
 
   @override
   Widget build(BuildContext context) {
+    final image = imageProvider;
     return AspectRatio(
       aspectRatio: 1,
-      child: PlaceholderArtwork(seed: seed, variation: variation),
+      child: image == null
+          ? PlaceholderArtwork(seed: seed, variation: variation)
+          : Image(
+              image: image,
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+            ),
     );
   }
 }
