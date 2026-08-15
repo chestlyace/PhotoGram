@@ -165,7 +165,7 @@ class _ProfileHeader extends StatelessWidget {
           width: 128,
           height: 128,
           padding: const EdgeInsets.all(4),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.canvas,
             shape: BoxShape.circle,
             boxShadow: NeumorphicShadows.convex,
@@ -204,7 +204,7 @@ class _StorageCard extends StatelessWidget {
             children: [
               Text('Storage', style: Theme.of(context).textTheme.headlineMedium),
               const Spacer(),
-              const Icon(Icons.cloud, size: 22, color: AppColors.onSurfaceVariant),
+              Icon(Icons.cloud, size: 22, color: AppColors.onSurfaceVariant),
             ],
           ),
           const SizedBox(height: 16),
@@ -268,7 +268,7 @@ class _StorageBar extends StatelessWidget {
               height: 12,
               child: FractionallySizedBox(
                 widthFactor: fraction,
-                child: const DecoratedBox(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: AppColors.outline,
                     borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -360,7 +360,7 @@ class _AccountRow extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Color(0xFF34A853),
@@ -413,7 +413,7 @@ class _PersonTile extends StatelessWidget {
             width: 72,
             height: 72,
             padding: const EdgeInsets.all(3),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.canvas,
               shape: BoxShape.circle,
               boxShadow: NeumorphicShadows.convex,
@@ -433,21 +433,22 @@ class _SettingsRow extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.color = AppColors.onSurface,
+    this.color,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = color ?? AppColors.onSurface;
     return GestureDetector(
       onTap: onTap,
       child: Row(
         children: [
-          Icon(icon, size: 22, color: color),
+          Icon(icon, size: 22, color: resolvedColor),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -455,10 +456,11 @@ class _SettingsRow extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
-                  ?.copyWith(color: color, fontWeight: FontWeight.w600),
+                  ?.copyWith(color: resolvedColor, fontWeight: FontWeight.w600),
             ),
           ),
-          Icon(Icons.chevron_right, size: 20, color: color.withValues(alpha: 0.6)),
+          Icon(Icons.chevron_right,
+              size: 20, color: resolvedColor.withValues(alpha: 0.6)),
         ],
       ),
     );

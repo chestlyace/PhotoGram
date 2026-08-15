@@ -10,14 +10,14 @@ class Neumorphic extends StatelessWidget {
     this.variant = NeumorphicVariant.convex,
     this.radius = AppRadii.card,
     this.padding,
-    this.color = AppColors.canvas,
+    this.color,
     this.child,
   });
 
   final NeumorphicVariant variant;
   final double radius;
   final EdgeInsetsGeometry? padding;
-  final Color color;
+  final Color? color;
   final Widget? child;
 
   @override
@@ -26,7 +26,7 @@ class Neumorphic extends StatelessWidget {
     final surface = Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? AppColors.canvas,
         borderRadius: borderRadius,
         boxShadow:
             variant == NeumorphicVariant.convex ? NeumorphicShadows.convex : null,

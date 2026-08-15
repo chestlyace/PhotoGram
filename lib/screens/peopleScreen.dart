@@ -274,7 +274,7 @@ class _PersonTile extends StatelessWidget {
       width: 80,
       height: 80,
       padding: const EdgeInsets.all(4),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.canvas,
         shape: BoxShape.circle,
         boxShadow: NeumorphicShadows.convex,

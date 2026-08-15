@@ -99,12 +99,12 @@ class _DetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 8, bottom: 32),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.primaryContainer,
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Color(0x66D1D9E6),
+            color: AppColors.shadow.withValues(alpha: 0.4),
             offset: Offset(0, -8),
             blurRadius: 24,
             spreadRadius: -4,

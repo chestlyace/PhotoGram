@@ -202,7 +202,7 @@ class _ShareButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.ios_share, size: 18, color: AppColors.onSurface),
+              Icon(Icons.ios_share, size: 18, color: AppColors.onSurface),
               const SizedBox(width: 6),
               Text(
                 'Share',

@@ -5,6 +5,13 @@ import '../components/photoTile.dart';
 import '../theme.dart';
 import 'libraryScreen.dart';
 
+const _kCollageCircle = 'assets/onboarding/IMG_9086.jpg';
+const _kCollageMid = 'assets/onboarding/IMG_9062.jpg';
+const _kCollageMain = 'assets/onboarding/IMG_9005.jpg';
+const _kCollageCorner = 'assets/onboarding/IMG_9020.jpg';
+const _kBirthdayDinner = 'assets/onboarding/photo_2026-08-15_02-29-02.jpg';
+const _kSummerTrip = 'assets/onboarding/photo_2026-08-15_02-29-09.jpg';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -391,7 +398,7 @@ class _ActionButton extends StatelessWidget {
                   ?.copyWith(color: AppColors.onSurface),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward, size: 20, color: AppColors.onSurface),
+            Icon(Icons.arrow_forward, size: 20, color: AppColors.onSurface),
           ],
         ),
       ),
@@ -403,6 +410,7 @@ class _Frame extends StatelessWidget {
   const _Frame({
     required this.seed,
     required this.size,
+    this.image,
     this.radius = AppRadii.grid,
     this.border = 6,
     this.rotation = 0,
@@ -411,6 +419,7 @@ class _Frame extends StatelessWidget {
 
   final String seed;
   final Size size;
+  final String? image;
   final double radius;
   final double border;
   final double rotation;
@@ -423,7 +432,9 @@ class _Frame extends StatelessWidget {
       height: size.height,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(circle ? 999 : radius - border),
-        child: PlaceholderArtwork(seed: seed),
+        child: image == null
+            ? PlaceholderArtwork(seed: seed)
+            : Image.asset(image!, fit: BoxFit.cover),
       ),
     );
     final framed = Neumorphic(
@@ -454,6 +465,7 @@ class _OrganizedArt extends StatelessWidget {
             left: 16,
             child: _Frame(
               seed: 'collage-circle',
+              image: _kCollageCircle,
               size: const Size(112, 112),
               border: 4,
               circle: true,
@@ -464,6 +476,7 @@ class _OrganizedArt extends StatelessWidget {
             left: 0,
             child: _Frame(
               seed: 'collage-mid',
+              image: _kCollageMid,
               size: const Size(96, 128),
               radius: 16,
               border: 4,
@@ -475,6 +488,7 @@ class _OrganizedArt extends StatelessWidget {
             left: 54,
             child: _Frame(
               seed: 'collage-main',
+              image: _kCollageMain,
               size: const Size(192, 256),
               radius: 24,
               border: 6,
@@ -485,6 +499,7 @@ class _OrganizedArt extends StatelessWidget {
             right: 0,
             child: _Frame(
               seed: 'collage-corner',
+              image: _kCollageCorner,
               size: const Size(128, 128),
               radius: 16,
               border: 4,
@@ -664,7 +679,7 @@ class _EventArt extends StatelessWidget {
                       variant: NeumorphicVariant.concave,
                       radius: 20,
                       color: AppColors.canvas,
-                      child: const SizedBox(
+                      child: SizedBox(
                         width: 40,
                         height: 40,
                         child: Icon(
@@ -720,7 +735,7 @@ class _EventArt extends StatelessWidget {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          const PlaceholderArtwork(seed: 'birthday-dinner'),
+                          Image.asset(_kBirthdayDinner, fit: BoxFit.cover),
                           Center(
                             child: Container(
                               width: 48,
@@ -729,7 +744,7 @@ class _EventArt extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 color: Color(0xCCFFFFFF),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.play_arrow,
                                 size: 28,
                                 color: AppColors.onSurface,
@@ -769,7 +784,7 @@ class _EventArt extends StatelessWidget {
                         Neumorphic(
                           radius: 16,
                           color: AppColors.canvas,
-                          child: const SizedBox(
+                          child: SizedBox(
                             width: 32,
                             height: 32,
                             child: Icon(
@@ -857,7 +872,7 @@ class _ShareArt extends StatelessWidget {
                       height: 128,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: const PlaceholderArtwork(seed: 'summer-trip'),
+                        child: Image.asset(_kSummerTrip, fit: BoxFit.cover),
                       ),
                     ),
                     const SizedBox(height: 12),

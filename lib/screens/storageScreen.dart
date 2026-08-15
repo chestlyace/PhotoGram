@@ -170,7 +170,7 @@ class _CurrentStorageCard extends StatelessWidget {
               Neumorphic(
                 variant: NeumorphicVariant.concave,
                 radius: 20,
-                child: const SizedBox(
+                child: SizedBox(
                   width: 40,
                   height: 40,
                   child: Icon(Icons.cloud, size: 20, color: AppColors.onSurfaceVariant),
@@ -283,7 +283,7 @@ class _StorageBar extends StatelessWidget {
               height: 12,
               child: FractionallySizedBox(
                 widthFactor: fraction,
-                child: const DecoratedBox(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: AppColors.outline,
                     borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -403,7 +403,7 @@ class _AddStorageButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.add, size: 18, color: AppColors.onSurface),
+            Icon(Icons.add, size: 18, color: AppColors.onSurface),
             const SizedBox(width: 8),
             Text(
               'Add storage',
